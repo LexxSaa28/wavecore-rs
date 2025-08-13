@@ -1,0 +1,172 @@
+# WaveCore Standard Performance Configuration
+# Untuk testing performa standar
+
+global:
+  environment: "testing"
+  log_level: "info"
+  output_dir: "./output"
+  timestamp_format: "%Y-%m-%d %H:%M:%S"
+  timezone: "UTC"
+
+hardware:
+  baseline:
+    cpu: "Generic CPU"
+    cores: 8
+    threads: 16
+    ram_gb: 16
+    os: "Linux"
+    blas: "OpenBLAS"
+  limits:
+    max_cpu_usage: 85.0
+    max_memory_usage: 75.0
+    max_disk_usage: 90.0
+    max_test_duration_hours: 2
+
+test_categories:
+  functional:
+    enabled: true
+    description: "Functional tests for standard performance"
+    tests: ["hydrostatics", "radiation", "diffraction", "rao"]
+    timeout_minutes: 10
+    retry_count: 2
+  performance:
+    enabled: true
+    description: "Performance tests"
+    tests: ["hydrostatics", "radiation", "diffraction", "rao"]
+    timeout_minutes: 15
+    retry_count: 2
+  extensions:
+    enabled: false
+    description: "Extension tests"
+    tests: []
+    timeout_minutes: 10
+    retry_count: 2
+  validation:
+    enabled: false
+    description: "Validation tests"
+    tests: []
+    timeout_minutes: 10
+    retry_count: 2
+
+stress_testing:
+  enabled: false
+  description: "Stress testing disabled for standard performance"
+  slo:
+    p50_latency_ms: 200.0
+    p95_latency_ms: 1000.0
+    p99_latency_ms: 2000.0
+    error_rate_percent: 5.0
+    throughput_sps: 50.0
+  stop_conditions:
+    p99_latency_ms: 5000.0
+    error_rate_percent: 20.0
+    memory_usage_percent: 85.0
+    cpu_usage_percent: 90.0
+    consecutive_failures: 5
+  load_patterns:
+    linear_ramp:
+      enabled: false
+      description: "Linear ramp load pattern"
+      phases: []
+    step_load:
+      enabled: false
+      description: "Step load pattern"
+      phases: []
+    wave_load:
+      enabled: false
+      description: "Wave load pattern"
+      phases: []
+    stress_to_failure:
+      enabled: false
+      description: "Stress to failure pattern"
+      phases: []
+
+msr_search:
+  enabled: false
+  algorithm: "binary_search"
+  description: "MSR search disabled for standard performance"
+  aimd:
+    additive_increase: 0.1
+    multiplicative_decrease: 0.5
+    interval_seconds: 30
+    convergence_threshold: 0.1
+  binary_search:
+    max_iterations: 15
+    convergence_threshold: 0.1
+    stability_periods: 5
+  criteria:
+    p99_latency_ms: 2000.0
+    error_rate_percent: 5.0
+    stability_duration_minutes: 10
+  search_space:
+    load_multipliers: [1.0, 2.0, 3.0]
+    duration_minutes: [10, 20]
+    step_size: 0.5
+  convergence:
+    max_iterations: 15
+    tolerance: 0.1
+    min_improvement: 0.05
+  validation:
+    confidence_threshold: 0.85
+    min_samples: 5
+    max_outliers: 2
+
+monitoring:
+  enabled: true
+  description: "Standard monitoring for performance testing"
+  metrics:
+    latency:
+      enabled: true
+      collection_interval_seconds: 5
+      percentiles: [50, 95, 99]
+    throughput:
+      enabled: true
+      collection_interval_seconds: 5
+      percentiles: null
+    resource_usage:
+      enabled: true
+      metrics: ["cpu", "memory", "disk"]
+      collection_interval_seconds: 5
+    errors:
+      enabled: true
+      collection_interval_seconds: 5
+      percentiles: null
+  profiling:
+    enabled: false
+    tools: []
+    collection_interval_seconds: 10
+  logging:
+    level: "info"
+    format: "json"
+    rotation:
+      max_size_mb: 200
+      max_files: 20
+    destinations: ["file", "console"]
+
+test_matrix:
+  mesh_sizes:
+    - name: "small"
+      panels: 200
+      description: "Small mesh for standard tests"
+    - name: "medium"
+      panels: 800
+      description: "Medium mesh for standard tests"
+  frequencies:
+    - name: "low"
+      range: [0.1, 0.5]
+      count: 8
+    - name: "medium"
+      range: [0.5, 2.0]
+      count: 12
+  problem_types: ["hydrostatics", "radiation", "diffraction", "rao"]
+
+reporting:
+  enabled: true
+  formats: ["json", "markdown", "html"]
+  sections: ["summary", "metrics", "performance"]
+  visualizations: ["charts", "graphs"]
+  export:
+    include_raw_data: true
+    include_charts: true
+    include_logs: true
+    compression: "gzip" 

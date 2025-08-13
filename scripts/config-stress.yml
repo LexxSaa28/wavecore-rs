@@ -1,0 +1,159 @@
+# WaveCore Stress Testing Configuration
+# Untuk stress testing dan load testing
+
+global:
+  environment: "stress-testing"
+  log_level: "info"
+  output_dir: "./output"
+  timestamp_format: "%Y-%m-%d %H:%M:%S"
+  timezone: "UTC"
+
+hardware:
+  baseline:
+    cpu: "Generic CPU"
+    cores: 8
+    threads: 16
+    ram_gb: 16
+    os: "Linux"
+    blas: "OpenBLAS"
+  limits:
+    max_cpu_usage: 95.0
+    max_memory_usage: 90.0
+    max_disk_usage: 95.0
+    max_test_duration_hours: 4
+
+test_categories:
+  functional:
+    enabled: true
+    description: "Functional tests for stress testing"
+    tests: ["hydrostatics", "radiation", "diffraction", "rao"]
+    timeout_minutes: 5
+    retry_count: 1
+  performance:
+    enabled: true
+    description: "Performance tests for stress testing"
+    tests: ["hydrostatics", "radiation", "diffraction", "rao"]
+    timeout_minutes: 10
+    retry_count: 1
+  extensions:
+    enabled: false
+    description: "Extension tests"
+    tests: []
+    timeout_minutes: 10
+    retry_count: 2
+  validation:
+    enabled: false
+    description: "Validation tests"
+    tests: []
+    timeout_minutes: 10
+    retry_count: 2
+
+stress_testing:
+  enabled: true
+  description: "Stress testing enabled with load patterns"
+  slo:
+    p50_latency_ms: 200.0
+    p95_latency_ms: 1000.0
+    p99_latency_ms: 2000.0
+    error_rate_percent: 10.0
+    throughput_sps: 50.0
+  stop_conditions:
+    p99_latency_ms: 10000.0
+    error_rate_percent: 50.0
+    memory_usage_percent: 95.0
+    cpu_usage_percent: 98.0
+    consecutive_failures: 10
+  load_patterns:
+    linear_ramp:
+      enabled: true
+      description: "Linear ramp load pattern"
+      phases:
+        - name: "ramp_up"
+          duration_minutes: 15
+          load_multiplier: 10.0
+          target_metric: "throughput"
+    step_load:
+      enabled: true
+      description: "Step load pattern"
+      phases:
+        - name: "step_1"
+          duration_minutes: 10
+          load_multiplier: 2.0
+        - name: "step_2"
+          duration_minutes: 10
+          load_multiplier: 5.0
+        - name: "step_3"
+          duration_minutes: 10
+          load_multiplier: 8.0
+    wave_load:
+      enabled: true
+      description: "Wave load pattern"
+      phases:
+        - name: "wave_cycle"
+          duration_minutes: 20
+          load_multiplier: 5.0
+          pattern: "sine"
+    stress_to_failure:
+      enabled: true
+      description: "Stress to failure pattern"
+      phases:
+        - name: "stress"
+          duration_minutes: 30
+          load_multiplier: 10.0
+
+msr_search:
+  enabled: true
+  description: "MSR search enabled for stress testing"
+  search_space:
+    load_multipliers: [1.0, 2.0, 5.0, 10.0]
+    duration_minutes: [5, 10, 15, 20]
+    step_size: 1.0
+  convergence:
+    max_iterations: 20
+    tolerance: 0.2
+    min_improvement: 0.1
+  validation:
+    confidence_threshold: 0.7
+    min_samples: 3
+    max_outliers: 2
+
+monitoring:
+  enabled: true
+  description: "Enhanced monitoring for stress testing"
+  metrics:
+    collection_interval_seconds: 2
+    retention_hours: 4
+    aggregation: "mean"
+  alerts:
+    enabled: true
+    channels: ["console", "log"]
+    thresholds:
+      cpu_usage: 90.0
+      memory_usage: 85.0
+      error_rate: 20.0
+  dashboards:
+    enabled: true
+    refresh_interval_seconds: 2
+    time_range_minutes: 60
+
+test_matrix:
+  mesh_sizes:
+    - name: "small"
+      panels: 100
+      description: "Small mesh for stress tests"
+  frequencies:
+    - name: "low"
+      range: [0.1, 0.5]
+      count: 5
+  problem_types: ["hydrostatics", "radiation", "diffraction", "rao"]
+
+reporting:
+  enabled: true
+  formats: ["json", "markdown", "html", "csv"]
+  sections: ["summary", "metrics", "performance", "stress"]
+  visualizations: ["charts", "graphs", "heatmaps"]
+  export:
+    include_raw_data: true
+    include_charts: true
+    include_logs: true
+    compression: "gzip" 

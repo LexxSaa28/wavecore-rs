@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  grafana:
+    image: grafana/grafana:latest
+    container_name: wavecore-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=wavecore123
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-simple-json-datasource
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards
+    restart: unless-stopped
+    depends_on:
+      - statsd
+    networks:
+      - wavecore-monitoring
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  statsd:
+    image: graphiteapp/graphite-statsd:latest
+    container_name: wavecore-statsd
+    ports:
+      - "8125:8125/udp"
+      - "8126:8126"
+      - "8080:80"
+    environment:
+      - STATSD_INTERFACE=udp
+      - STATSD_PROTOCOL=udp
+      - STATSD_PORT=8125
+      - GRAPHITE_TIME_ZONE=Asia/Jakarta
+      - GRAPHITE_STORAGE_SCHEMAS=wavecore:10s:1d,1m:7d,5m:30d,10m:1y
+      - GRAPHITE_STORAGE_AGGREGATION=wavecore:avg
+    volumes:
+      - statsd_data:/opt/graphite/storage
+      - ./monitoring/graphite/storage-schemas.conf:/opt/graphite/conf/storage-schemas.conf:ro
+      - ./monitoring/graphite/storage-aggregation.conf:/opt/graphite/conf/storage-aggregation.conf:ro
+      - ./monitoring/graphite/statsd.conf:/opt/graphite/conf/statsd.conf:ro
+    restart: unless-stopped
+    networks:
+      - wavecore-monitoring
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+volumes:
+  grafana_data:
+  statsd_data:
+
+networks:
+  wavecore-monitoring:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16 

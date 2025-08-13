@@ -1,0 +1,499 @@
+use serde::{Deserialize, Serialize};
+use std::fs;
+
+/// Global configuration settings
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GlobalConfig {
+    pub environment: String,
+    pub log_level: String,
+    pub output_dir: String,
+    pub timestamp_format: String,
+    pub timezone: String,
+}
+
+/// Hardware configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HardwareConfig {
+    pub baseline: HardwareBaseline,
+    pub limits: ResourceLimits,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct HardwareBaseline {
+    pub cpu: String,
+    pub cores: u32,
+    pub threads: u32,
+    pub ram_gb: u32,
+    pub os: String,
+    pub blas: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ResourceLimits {
+    pub max_cpu_usage: f64,
+    pub max_memory_usage: f64,
+    pub max_disk_usage: f64,
+    pub max_test_duration_hours: u32,
+}
+
+/// Test categories configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TestCategoriesConfig {
+    pub functional: TestCategoryConfig,
+    pub performance: TestCategoryConfig,
+    pub extensions: TestCategoryConfig,
+    pub validation: TestCategoryConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TestCategoryConfig {
+    pub enabled: bool,
+    pub description: String,
+    pub tests: Vec<String>,
+    pub timeout_minutes: u32,
+    pub retry_count: u32,
+}
+
+/// Stress testing configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StressTestingConfig {
+    pub enabled: bool,
+    pub description: String,
+    pub slo: SLOConfig,
+    pub stop_conditions: StopConditions,
+    pub load_patterns: LoadPatterns,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SLOConfig {
+    pub p50_latency_ms: f64,
+    pub p95_latency_ms: f64,
+    pub p99_latency_ms: f64,
+    pub error_rate_percent: f64,
+    pub throughput_sps: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StopConditions {
+    pub p99_latency_ms: f64,
+    pub error_rate_percent: f64,
+    pub memory_usage_percent: f64,
+    pub cpu_usage_percent: f64,
+    pub consecutive_failures: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LoadPatterns {
+    pub linear_ramp: LoadPatternConfig,
+    pub step_load: LoadPatternConfig,
+    pub wave_load: LoadPatternConfig,
+    pub stress_to_failure: LoadPatternConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LoadPatternConfig {
+    pub enabled: bool,
+    pub description: String,
+    pub phases: Vec<LoadPhase>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LoadPhase {
+    pub name: String,
+    pub duration_minutes: Option<u32>,
+    pub duration_seconds: Option<u32>,
+    pub duration_hours: Option<u32>,
+    pub start_rate: Option<f64>,
+    pub end_rate: Option<f64>,
+    pub rate: Option<f64>,
+    pub step_increase: Option<f64>,
+    pub step_duration_seconds: Option<u32>,
+    pub base_rate: Option<f64>,
+    pub amplitude: Option<f64>,
+    pub frequency_hz: Option<f64>,
+    pub max_rate: Option<f64>,
+    pub search_algorithm: Option<String>,
+    pub convergence_threshold: Option<f64>,
+}
+
+/// MSR search configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MSRSearchConfig {
+    pub enabled: bool,
+    pub algorithm: String,
+    pub aimd: AIMDConfig,
+    pub binary_search: BinarySearchConfig,
+    pub criteria: MSRCriteria,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AIMDConfig {
+    pub additive_increase: f64,
+    pub multiplicative_decrease: f64,
+    pub interval_seconds: u32,
+    pub convergence_threshold: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct BinarySearchConfig {
+    pub max_iterations: u32,
+    pub convergence_threshold: f64,
+    pub stability_periods: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MSRCriteria {
+    pub p99_latency_ms: f64,
+    pub error_rate_percent: f64,
+    pub stability_duration_minutes: u32,
+}
+
+/// Monitoring configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MonitoringConfig {
+    pub enabled: bool,
+    pub metrics: MetricsConfig,
+    pub profiling: ProfilingConfig,
+    pub logging: LoggingConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MetricsConfig {
+    pub latency: MetricConfig,
+    pub throughput: MetricConfig,
+    pub resource_usage: ResourceUsageConfig,
+    pub errors: MetricConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MetricConfig {
+    pub enabled: bool,
+    pub collection_interval_seconds: u32,
+    pub percentiles: Option<Vec<u32>>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ResourceUsageConfig {
+    pub enabled: bool,
+    pub metrics: Vec<String>,
+    pub collection_interval_seconds: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ProfilingConfig {
+    pub enabled: bool,
+    pub tools: Vec<String>,
+    pub collection_interval_seconds: u32,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LoggingConfig {
+    pub level: String,
+    pub format: String,
+    pub rotation: LogRotationConfig,
+    pub destinations: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct LogRotationConfig {
+    pub max_size_mb: u32,
+    pub max_files: u32,
+}
+
+/// Test matrix configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct TestMatrixConfig {
+    pub mesh_sizes: Vec<MeshSizeConfig>,
+    pub frequencies: Vec<FrequencyConfig>,
+    pub problem_types: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct MeshSizeConfig {
+    pub name: String,
+    pub panels: u32,
+    pub description: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct FrequencyConfig {
+    pub name: String,
+    pub range: Vec<f64>,
+    pub count: u32,
+}
+
+/// Reporting configuration
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ReportingConfig {
+    pub enabled: bool,
+    pub formats: Vec<String>,
+    pub sections: Vec<String>,
+    pub visualizations: Vec<String>,
+    pub export: ExportConfig,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ExportConfig {
+    pub include_raw_data: bool,
+    pub include_charts: bool,
+    pub include_logs: bool,
+    pub compression: String,
+}
+
+/// Main configuration structure
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct Config {
+    pub global: GlobalConfig,
+    pub hardware: HardwareConfig,
+    pub test_categories: TestCategoriesConfig,
+    pub stress_testing: StressTestingConfig,
+    pub msr_search: MSRSearchConfig,
+    pub monitoring: MonitoringConfig,
+    pub test_matrix: TestMatrixConfig,
+    pub reporting: ReportingConfig,
+}
+
+impl Config {
+    /// Load configuration from YAML file
+    pub fn load(config_path: &str) -> Result<Self, Box<dyn std::error::Error>> {
+        let config_content = fs::read_to_string(config_path)?;
+        let config: Config = serde_yaml::from_str(&config_content)?;
+        Ok(config)
+    }
+    
+    /// Load configuration with default path
+    pub fn load_default() -> Result<Self, Box<dyn std::error::Error>> {
+        Self::load("config.yml")
+    }
+    
+    /// Save configuration to YAML file
+    pub fn save(&self, config_path: &str) -> Result<(), Box<dyn std::error::Error>> {
+        let config_content = serde_yaml::to_string(self)?;
+        fs::write(config_path, config_content)?;
+        Ok(())
+    }
+    
+    /// Get enabled test categories
+    pub fn get_enabled_categories(&self) -> Vec<&str> {
+        let mut categories = Vec::new();
+        
+        if self.test_categories.functional.enabled {
+            categories.push("functional");
+        }
+        if self.test_categories.performance.enabled {
+            categories.push("performance");
+        }
+        if self.test_categories.extensions.enabled {
+            categories.push("extensions");
+        }
+        if self.test_categories.validation.enabled {
+            categories.push("validation");
+        }
+        
+        categories
+    }
+    
+    /// Get enabled load patterns
+    pub fn get_enabled_load_patterns(&self) -> Vec<&str> {
+        let mut patterns = Vec::new();
+        
+        if self.stress_testing.load_patterns.linear_ramp.enabled {
+            patterns.push("linear_ramp");
+        }
+        if self.stress_testing.load_patterns.step_load.enabled {
+            patterns.push("step_load");
+        }
+        if self.stress_testing.load_patterns.wave_load.enabled {
+            patterns.push("wave_load");
+        }
+        if self.stress_testing.load_patterns.stress_to_failure.enabled {
+            patterns.push("stress_to_failure");
+        }
+        
+        patterns
+    }
+    
+    /// Get test list for a category
+    pub fn get_tests_for_category(&self, category: &str) -> Option<Vec<String>> {
+        match category {
+            "functional" => Some(self.test_categories.functional.tests.clone()),
+            "performance" => Some(self.test_categories.performance.tests.clone()),
+            "extensions" => Some(self.test_categories.extensions.tests.clone()),
+            "validation" => Some(self.test_categories.validation.tests.clone()),
+            _ => None,
+        }
+    }
+    
+    /// Get timeout for a category
+    pub fn get_timeout_for_category(&self, category: &str) -> Option<u32> {
+        match category {
+            "functional" => Some(self.test_categories.functional.timeout_minutes),
+            "performance" => Some(self.test_categories.performance.timeout_minutes),
+            "extensions" => Some(self.test_categories.extensions.timeout_minutes),
+            "validation" => Some(self.test_categories.validation.timeout_minutes),
+            _ => None,
+        }
+    }
+    
+    /// Get retry count for a category
+    pub fn get_retry_count_for_category(&self, category: &str) -> Option<u32> {
+        match category {
+            "functional" => Some(self.test_categories.functional.retry_count),
+            "performance" => Some(self.test_categories.performance.retry_count),
+            "extensions" => Some(self.test_categories.extensions.retry_count),
+            "validation" => Some(self.test_categories.validation.retry_count),
+            _ => None,
+        }
+    }
+    
+    /// Check if stress testing is enabled
+    pub fn is_stress_testing_enabled(&self) -> bool {
+        self.stress_testing.enabled
+    }
+    
+    /// Check if MSR search is enabled
+    pub fn is_msr_search_enabled(&self) -> bool {
+        self.msr_search.enabled
+    }
+    
+    /// Get SLO configuration
+    pub fn get_slo(&self) -> &SLOConfig {
+        &self.stress_testing.slo
+    }
+    
+    /// Get stop conditions
+    pub fn get_stop_conditions(&self) -> &StopConditions {
+        &self.stress_testing.stop_conditions
+    }
+    
+    /// Get load pattern configuration
+    pub fn get_load_pattern(&self, pattern_name: &str) -> Option<&LoadPatternConfig> {
+        match pattern_name {
+            "linear_ramp" => Some(&self.stress_testing.load_patterns.linear_ramp),
+            "step_load" => Some(&self.stress_testing.load_patterns.step_load),
+            "wave_load" => Some(&self.stress_testing.load_patterns.wave_load),
+            "stress_to_failure" => Some(&self.stress_testing.load_patterns.stress_to_failure),
+            _ => None,
+        }
+    }
+    
+    /// Get mesh size configuration
+    pub fn get_mesh_size(&self, name: &str) -> Option<&MeshSizeConfig> {
+        self.test_matrix.mesh_sizes.iter().find(|ms| ms.name == name)
+    }
+    
+    /// Get frequency configuration
+    pub fn get_frequency(&self, name: &str) -> Option<&FrequencyConfig> {
+        self.test_matrix.frequencies.iter().find(|f| f.name == name)
+    }
+    
+    /// Validate configuration
+    pub fn validate(&self) -> Result<(), Vec<String>> {
+        let mut errors = Vec::new();
+        
+        // Validate global settings
+        if self.global.output_dir.is_empty() {
+            errors.push("Global output_dir cannot be empty".to_string());
+        }
+        
+        // Validate hardware limits
+        if self.hardware.limits.max_cpu_usage > 100.0 {
+            errors.push("Max CPU usage cannot exceed 100%".to_string());
+        }
+        if self.hardware.limits.max_memory_usage > 100.0 {
+            errors.push("Max memory usage cannot exceed 100%".to_string());
+        }
+        
+        // Validate SLO settings
+        if self.stress_testing.slo.p50_latency_ms >= self.stress_testing.slo.p95_latency_ms {
+            errors.push("P50 latency must be less than P95 latency".to_string());
+        }
+        if self.stress_testing.slo.p95_latency_ms >= self.stress_testing.slo.p99_latency_ms {
+            errors.push("P95 latency must be less than P99 latency".to_string());
+        }
+        
+        // Validate stop conditions
+        if self.stress_testing.stop_conditions.p99_latency_ms <= self.stress_testing.slo.p99_latency_ms {
+            errors.push("Stop condition P99 latency must be greater than SLO P99 latency".to_string());
+        }
+        
+        if errors.is_empty() {
+            Ok(())
+        } else {
+            Err(errors)
+        }
+    }
+}
+
+/// Configuration manager for runtime configuration updates
+pub struct ConfigManager {
+    config: Config,
+    config_path: String,
+}
+
+impl ConfigManager {
+    pub fn new(config_path: String) -> Result<Self, Box<dyn std::error::Error>> {
+        let config = Config::load(&config_path)?;
+        config.validate().map_err(|e| format!("Configuration validation failed: {:?}", e))?;
+        
+        Ok(Self {
+            config,
+            config_path,
+        })
+    }
+    
+    pub fn get_config(&self) -> &Config {
+        &self.config
+    }
+    
+    pub fn get_config_mut(&mut self) -> &mut Config {
+        &mut self.config
+    }
+    
+    pub fn reload(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+        self.config = Config::load(&self.config_path)?;
+        self.config.validate().map_err(|e| format!("Configuration validation failed: {:?}", e))?;
+        Ok(())
+    }
+    
+    pub fn save(&self) -> Result<(), Box<dyn std::error::Error>> {
+        self.config.save(&self.config_path)
+    }
+    
+    pub fn update_global_setting(&mut self, key: &str, value: &str) -> Result<(), Box<dyn std::error::Error>> {
+        match key {
+            "environment" => self.config.global.environment = value.to_string(),
+            "log_level" => self.config.global.log_level = value.to_string(),
+            "output_dir" => self.config.global.output_dir = value.to_string(),
+            "timezone" => self.config.global.timezone = value.to_string(),
+            _ => return Err(format!("Unknown global setting: {}", key).into()),
+        }
+        
+        self.config.validate().map_err(|e| format!("Configuration validation failed: {:?}", e))?;
+        Ok(())
+    }
+    
+    pub fn enable_category(&mut self, category: &str) -> Result<(), Box<dyn std::error::Error>> {
+        match category {
+            "functional" => self.config.test_categories.functional.enabled = true,
+            "performance" => self.config.test_categories.performance.enabled = true,
+            "extensions" => self.config.test_categories.extensions.enabled = true,
+            "validation" => self.config.test_categories.validation.enabled = true,
+            _ => return Err(format!("Unknown category: {}", category).into()),
+        }
+        
+        Ok(())
+    }
+    
+    pub fn disable_category(&mut self, category: &str) -> Result<(), Box<dyn std::error::Error>> {
+        match category {
+            "functional" => self.config.test_categories.functional.enabled = false,
+            "performance" => self.config.test_categories.performance.enabled = false,
+            "extensions" => self.config.test_categories.extensions.enabled = false,
+            "validation" => self.config.test_categories.validation.enabled = false,
+            _ => return Err(format!("Unknown category: {}", category).into()),
+        }
+        
+        Ok(())
+    }
+}

@@ -1,0 +1,46 @@
+[package]
+name = "wavecore-test-suite"
+version = "0.1.0"
+edition = "2021"
+authors = ["OceanOS Sim Team"]
+description = "Pure Rust test suite for WaveCore library"
+license = "MIT/Apache-2.0"
+
+[dependencies]
+# WaveCore dependencies
+wavecore-bem = { path = "../bem" }
+wavecore-meshes = { path = "../meshes" }
+wavecore-bodies = { path = "../bodies" }
+wavecore-matrices = { path = "../matrices" }
+
+# External dependencies
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+chrono = { version = "0.4", features = ["serde"] }
+
+# System monitoring and stress testing
+sysinfo = "0.30"
+tokio = { version = "1.0", features = ["full"] }
+futures = "0.3"
+async-trait = "0.1"
+lazy_static = "1.4"
+
+# Prometheus metrics
+prometheus = "0.13"
+actix-web = "4.0"
+actix-rt = "2.0"
+
+# StatsD metrics (async, non-blocking)
+statsd = "0.16.1"
+
+# CLI and utilities
+clap = { version = "4.0", features = ["derive"] }
+colored = "2.0"
+indicatif = "0.17"
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+[[bin]]
+name = "wavecore_test_suite"
+path = "src/main.rs" 
