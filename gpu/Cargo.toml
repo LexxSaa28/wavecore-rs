@@ -1,0 +1,42 @@
+[package]
+name = "wavecore-gpu"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "GPU acceleration for WaveCore marine hydrodynamics solver"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Core dependencies
+nalgebra.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+
+# GPU Computing
+cudarc = { version = "0.10", optional = true }
+candle-core = { version = "0.3", optional = true }
+candle-nn = { version = "0.3", optional = true }
+
+# Parallel computing
+rayon.workspace = true
+num_cpus = "1.16"
+tracing = "0.1"
+
+# Local dependencies
+wavecore-matrices = { path = "../matrices" }
+wavecore-meshes = { path = "../meshes" }
+wavecore-green-functions = { path = "../green_functions" }
+
+# Development dependencies
+[dev-dependencies]
+criterion.workspace = true
+
+[features]
+default = ["cpu-fallback"]
+cuda = ["dep:cudarc"]
+candle = ["dep:candle-core", "dep:candle-nn"]
+cpu-fallback = []
+all-gpu = ["cuda", "candle"] 

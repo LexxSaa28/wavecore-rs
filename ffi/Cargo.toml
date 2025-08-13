@@ -1,0 +1,37 @@
+[package]
+name = "wavecore-ffi"
+version = "0.1.0"
+edition = "2021"
+authors = ["OceanOS Sim Team"]
+description = "Foreign Function Interface for WaveCore"
+license = "MIT/Apache-2.0"
+
+[lib]
+name = "wavecore"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+wavecore-bem = { path = "../bem" }
+wavecore-meshes = { path = "../meshes" }
+wavecore-green-functions = { path = "../green_functions" }
+wavecore-matrices = { path = "../matrices" }
+wavecore-bodies = { path = "../bodies" }
+
+# Standard library dependencies
+serde = { version = "1.0", features = ["derive"] }
+thiserror = "1.0"
+anyhow = "1.0"
+lazy_static = "1.4"
+
+[build-dependencies]
+cbindgen = "0.24"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+panic = "abort"
+
+[profile.dev]
+opt-level = 0
+debug = true 

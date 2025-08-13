@@ -1,0 +1,47 @@
+[package]
+name = "wavecore-examples"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "Example applications for marine hydrodynamics"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Workspace dependencies
+wavecore-bem = { path = "../bem" }
+wavecore-green-functions = { path = "../green_functions" }
+wavecore-meshes = { path = "../meshes" }
+wavecore-bodies = { path = "../bodies" }
+wavecore-io = { path = "../io" }
+wavecore-post-pro = { path = "../post_pro" }
+
+# External dependencies
+nalgebra.workspace = true
+ndarray.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+log.workspace = true
+env_logger.workspace = true
+rayon.workspace = true
+approx.workspace = true
+num-traits.workspace = true
+num-complex.workspace = true
+tokio.workspace = true
+chrono = { version = "0.4", features = ["serde"] }
+
+[[bin]]
+name = "wavecore_rust_test"
+path = "src/wavecore_rust_test.rs"
+
+[[bin]]
+name = "wavecore_library_test"
+path = "src/wavecore_library_test.rs"
+
+[[bin]]
+name = "wavecore_test_suite"
+path = "src/wavecore_test_suite.rs" 
