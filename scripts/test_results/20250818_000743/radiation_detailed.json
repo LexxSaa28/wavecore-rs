@@ -1,0 +1,27 @@
+{
+  "configuration": {
+    "depth_type": "infinite",
+    "forward_speed": 0.0,
+    "has_field": false,
+    "if_removal": false,
+    "mesh_tier": "T2",
+    "num_bodies": 1,
+    "problem_type": "radiation"
+  },
+  "duration": {
+    "execution": 329.7243103,
+    "metrics_calculation": 0.0029372,
+    "setup": 0.0010795,
+    "statsd_init": 2e-6,
+    "total": 329.7574381
+  },
+  "performance": {
+    "p50_latency_ms": 30.1938,
+    "p95_latency_ms": 109.75110000000001,
+    "p99_latency_ms": 263.1902,
+    "throughput_ops_per_sec": 21.836424476706227,
+    "total_panels": 7200
+  },
+  "test_name": "radiation",
+  "timestamp": "2025-08-18T00:13:13.663392100+07:00"
+}

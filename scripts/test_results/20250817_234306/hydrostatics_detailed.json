@@ -1,0 +1,27 @@
+{
+  "configuration": {
+    "depth_type": "infinite",
+    "forward_speed": 0.0,
+    "has_field": false,
+    "if_removal": false,
+    "mesh_tier": "T2",
+    "num_bodies": 1,
+    "problem_type": "hydrostatics"
+  },
+  "duration": {
+    "execution": 41.9666805,
+    "metrics_calculation": 0.0217883,
+    "setup": 0.0002154,
+    "statsd_init": 6e-7,
+    "total": 41.9928813
+  },
+  "performance": {
+    "p50_latency_ms": 0.5616,
+    "p95_latency_ms": 2.8059000000000003,
+    "p99_latency_ms": 7.584300000000001,
+    "throughput_ops_per_sec": 953.1370964639435,
+    "total_panels": 40000
+  },
+  "test_name": "hydrostatics",
+  "timestamp": "2025-08-17T23:43:06.272165900+07:00"
+}

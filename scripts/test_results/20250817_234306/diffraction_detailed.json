@@ -1,0 +1,27 @@
+{
+  "configuration": {
+    "depth_type": "infinite",
+    "forward_speed": 0.0,
+    "has_field": false,
+    "if_removal": false,
+    "mesh_tier": "T2",
+    "num_bodies": 1,
+    "problem_type": "diffraction"
+  },
+  "duration": {
+    "execution": 10.2165971,
+    "metrics_calculation": 0.0078338,
+    "setup": 0.0008927,
+    "statsd_init": 9e-7,
+    "total": 10.2382113
+  },
+  "performance": {
+    "p50_latency_ms": 0.11649999999999999,
+    "p95_latency_ms": 0.32,
+    "p99_latency_ms": 1.5337,
+    "throughput_ops_per_sec": 3132.158358285461,
+    "total_panels": 32000
+  },
+  "test_name": "diffraction",
+  "timestamp": "2025-08-17T23:46:45.950338700+07:00"
+}

@@ -1,0 +1,160 @@
+# WaveCore Development Configuration
+# Use Case: Quick testing during development
+# Expected Duration: 1-5 minutes
+
+test_categories:
+  core:
+    name: "core"
+    description: "Core functionality tests"
+    enabled: true
+    timeout_minutes: 30
+    retry_count: 1
+    tests:
+      - hydrostatics
+      - debug
+  validation:
+    name: "validation"
+    description: "Validation tests"
+    enabled: true
+    timeout_minutes: 10
+    retry_count: 1
+    tests:
+      - debug
+  functional:
+    name: "functional"
+    description: "Functional tests"
+    enabled: true
+    timeout_minutes: 60
+    retry_count: 2
+    tests:
+      - hydrostatics
+      - radiation
+      - diffraction
+      - rao
+  performance:
+    name: "performance"
+    description: "Performance tests"
+    enabled: true
+    timeout_minutes: 120
+    retry_count: 1
+    tests:
+      - stress
+
+hardware:
+  cpu_cores: 4
+  memory_gb: 8
+  gpu_enabled: false
+  baseline:
+    cpu: 50
+    memory: 60
+    disk: 40
+    cores: 4
+    threads: 8
+    ram_gb: 8
+    os: "linux"
+    blas: "openblas"
+  limits:
+    max_cpu_usage: 90
+    max_memory_usage: 85
+    max_disk_usage: 80
+    max_test_duration_hours: 2
+
+global:
+  environment: "development"
+  output_dir: "./output"
+  timestamp_format: "%Y-%m-%d %H:%M:%S"
+  timezone: "UTC"
+  timeout: 60
+  retry_count: 1
+  log_level: "debug"
+  metrics_enabled: true
+
+categories:
+  core:
+    enabled: true
+    timeout: 30
+    retry_count: 1
+    tests:
+      - hydrostatics
+      - debug
+
+  validation:
+    enabled: true
+    timeout: 30
+    retry_count: 1
+    tests:
+      - debug
+
+meshes:
+  small:
+    panels: 50
+    vertices: 100
+    description: "Minimal mesh for development"
+
+frequencies:
+  low:
+    min: 0.1
+    max: 1.0
+    steps: 5
+    description: "Limited frequency range"
+
+monitoring:
+  enabled: true
+  logging:
+    level: "debug"
+    format: "json"
+    output: "console"
+    file: "./logs/wavecore.log"
+    max_size: "100MB"
+    max_files: 10
+    rotation:
+      strategy: "daily"
+      max_size_mb: 100
+      max_files: 10
+    destinations:
+      - console
+      - file
+  profiling:
+    enabled: false
+    interval: 60
+    output_dir: "./profiles"
+    collection_interval_seconds: 60
+    tools:
+      - cpu
+      - memory
+  statsd:
+    host: "127.0.0.1"
+    port: 8125
+    prefix: "wavecore"
+    batch_size: 1
+    flush_interval_ms: 100
+    
+  grafana:
+    url: "http://localhost:3000"
+    username: "admin"
+    password: "wavecore123"
+    
+  metrics:
+    enabled: true
+    interval: 5
+    retention: 1800
+    latency:
+      threshold: 1000
+      enabled: true
+      collection_interval_seconds: 5
+    throughput:
+      threshold: 10
+      enabled: true
+      collection_interval_seconds: 5
+    resource_usage:
+      cpu_threshold: 80
+      memory_threshold: 80
+      enabled: true
+      collection_interval_seconds: 5
+      metrics:
+        - cpu
+        - memory
+    errors:
+      threshold: 0.01
+      enabled: true
+      collection_interval_seconds: 5 

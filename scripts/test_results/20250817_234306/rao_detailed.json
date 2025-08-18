@@ -1,0 +1,27 @@
+{
+  "configuration": {
+    "depth_type": "infinite",
+    "forward_speed": 0.0,
+    "has_field": false,
+    "if_removal": false,
+    "mesh_tier": "T2",
+    "num_bodies": 1,
+    "problem_type": "rao"
+  },
+  "duration": {
+    "execution": 7.6583933,
+    "metrics_calculation": 0.0109711,
+    "setup": 0.0003052,
+    "statsd_init": 1.1e-6,
+    "total": 7.6730192
+  },
+  "performance": {
+    "p50_latency_ms": 0.1172,
+    "p95_latency_ms": 0.3044,
+    "p99_latency_ms": 1.5406,
+    "throughput_ops_per_sec": 2507.053274477298,
+    "total_panels": 19200
+  },
+  "test_name": "rao",
+  "timestamp": "2025-08-17T23:46:53.720611800+07:00"
+}
