@@ -1,0 +1,42 @@
+[package]
+name = "wavecore-validation"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "Industry validation benchmarks for WaveCore marine hydrodynamics solver"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Core dependencies
+nalgebra.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+# File I/O
+csv = "1.2"
+
+# Statistical analysis
+statrs = "0.16"
+chrono = { version = "0.4", features = ["serde"] }
+
+# Parallel computing
+rayon = { workspace = true, optional = true }
+
+# Local dependencies
+wavecore-meshes = { path = "../meshes" }
+wavecore-green-functions = { path = "../green_functions" }
+wavecore-bem = { path = "../bem" }
+wavecore-matrices = { path = "../matrices" }
+
+[dev-dependencies]
+criterion.workspace = true
+tempfile = "3.8"
+
+[features]
+default = ["parallel"]
+parallel = ["dep:rayon"] 

@@ -1,0 +1,34 @@
+[package]
+name = "wavecore-io"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "Input/Output operations for marine hydrodynamics"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Workspace dependencies
+wavecore-meshes = { path = "../meshes" }
+wavecore-bodies = { path = "../bodies" }
+wavecore-bem = { path = "../bem" }
+
+# External dependencies
+nalgebra.workspace = true
+ndarray.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+serde_yaml.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+log.workspace = true
+memmap2.workspace = true
+walkdir.workspace = true
+nom = "7.1"
+chrono = { version = "0.4", features = ["serde"] }
+
+[dev-dependencies]
+criterion.workspace = true
+proptest.workspace = true 

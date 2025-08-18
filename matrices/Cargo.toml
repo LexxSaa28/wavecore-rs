@@ -1,0 +1,56 @@
+[package]
+name = "wavecore-matrices"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "High-performance linear algebra and matrix operations for WaveCore"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Core mathematical libraries
+nalgebra.workspace = true
+ndarray.workspace = true
+
+# Linear algebra and optimization
+lapack.workspace = true
+
+# Serialization
+serde.workspace = true
+serde_json.workspace = true
+
+# Error handling
+thiserror.workspace = true
+anyhow.workspace = true
+
+# Logging
+log.workspace = true
+
+# Performance and concurrency
+rayon.workspace = true
+parking_lot.workspace = true
+
+# Testing
+approx.workspace = true
+proptest.workspace = true
+
+# Additional mathematical utilities
+num-traits.workspace = true
+num-complex.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+
+[[bench]]
+name = "matrix_operations"
+harness = false
+
+[[bench]]
+name = "linear_solvers"
+harness = false
+
+[[bench]]
+name = "block_matrices"
+harness = false 

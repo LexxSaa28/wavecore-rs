@@ -1,0 +1,100 @@
+[workspace]
+resolver = "2"
+
+members = [
+    "bem",
+    "green_functions", 
+    "meshes",
+    "bodies",
+    "matrices",
+    "io",
+    "post_pro",
+    "ui",
+    # "examples",     # Temporarily disabled - API compatibility issues
+    "benchmarks",
+    "resistance",
+    "gpu",          # Re-enabled for compatibility fixes
+    # "validation",   # Temporarily disabled - API compatibility issues
+    "ffi",
+    "scripts"
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+authors = ["OceanOS Sim Team"]
+description = "High-performance wave analysis & boundary element methods for Marine Hydrodynamics"
+license = "MIT/Apache-2.0"
+repository = "https://github.com/OceanOS-id/wavecore-rs"
+keywords = ["maritime", "hydrodynamics", "wave-analysis", "bem", "boundary-element-method"]
+categories = ["simulation", "science", "engineering"]
+
+[workspace.dependencies]
+# Core mathematical libraries
+nalgebra = { version = "0.32", features = ["serde"] }
+ndarray = { version = "0.15", features = ["serde", "rayon"] }
+
+# Linear algebra and optimization
+lapack = "0.19"
+
+# Serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+serde_yaml = "0.9"
+
+# Error handling
+thiserror = "1.0"
+anyhow = "1.0"
+
+# Logging and tracing
+tracing = "0.1"
+
+# Time handling
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging and monitoring
+log = "0.4"
+env_logger = "0.10"
+
+# Performance and concurrency
+rayon = "1.8"
+parking_lot = "0.12"
+crossbeam = "0.8"
+
+# Web framework
+axum = "0.7"
+tokio = { version = "1.0", features = ["full"] }
+
+# CLI framework
+clap = { version = "4.0", features = ["derive"] }
+
+# Testing and benchmarking
+criterion = "0.5"
+proptest = "1.3"
+
+# File I/O
+memmap2 = "0.9"
+walkdir = "2.4"
+
+# Additional mathematical utilities
+approx = "0.5"
+num-traits = "0.2"
+num-complex = "0.4"
+
+# Time and date handling (already defined above)
+
+# Async utilities
+async-trait = "0.1"
+futures = "0.3"
+lazy_static = "1.4"
+
+# Tracing and logging
+tracing-subscriber = "0.3" 
+
+# This is a virtual workspace - dependencies are defined in individual workspace members
+
+# NOTE: This project is designed to be standalone but may have dependencies
+# on other OceanOS cores. If you encounter missing dependencies, consider:
+# 1. Removing modules that depend on external cores (io, validation, gpu)
+# 2. Creating mock/stub implementations for external dependencies
+# 3. Reintegrating with the full OceanOS workspace

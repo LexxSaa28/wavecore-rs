@@ -1,0 +1,35 @@
+[package]
+name = "wavecore-resistance"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "Ship resistance calculation module for WaveCore - Holtrop-Mennen and RAO integration"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+nalgebra.workspace = true
+ndarray.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+chrono.workspace = true
+
+# Mathematical computation
+num-traits = "0.2"
+libm = "0.2"
+
+# Optional features
+tokio = { version = "1.0", features = ["full"], optional = true }
+
+[features]
+default = ["async"]
+async = ["tokio"]
+
+[dev-dependencies]
+tokio-test = "0.4"
+approx = "0.5" 

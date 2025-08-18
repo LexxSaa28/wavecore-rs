@@ -1,0 +1,30 @@
+[package]
+name = "wavecore-green-functions"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "Green function implementations for marine hydrodynamics"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Workspace dependencies
+wavecore-matrices = { path = "../matrices" }
+
+# External dependencies
+nalgebra.workspace = true
+ndarray.workspace = true
+serde.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+log.workspace = true
+rayon.workspace = true
+approx.workspace = true
+num-traits.workspace = true
+num-complex.workspace = true
+
+[dev-dependencies]
+criterion.workspace = true
+proptest.workspace = true 

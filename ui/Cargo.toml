@@ -1,0 +1,32 @@
+[package]
+name = "wavecore-ui"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+description = "User interface for marine hydrodynamics"
+license.workspace = true
+repository.workspace = true
+keywords.workspace = true
+categories.workspace = true
+
+[dependencies]
+# Workspace dependencies
+wavecore-bem = { path = "../bem" }
+wavecore-io = { path = "../io" }
+wavecore-post-pro = { path = "../post_pro" }
+
+# External dependencies
+axum.workspace = true
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+anyhow.workspace = true
+log.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+tower-http = { version = "0.5", features = ["cors"] }
+
+[dev-dependencies]
+criterion.workspace = true
+proptest.workspace = true 
